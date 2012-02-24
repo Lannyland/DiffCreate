@@ -100,6 +100,29 @@ namespace DiffCreate
 
             // Resize map
 
+
+
+
+            mDiff = new RtwMatrix(nrows, ncols);
+            for (int i = 0; i < nrows; i++)
+            {
+                for (int j = 0; j < ncols; j++)
+                {
+                    if (mBigGrid[i, j] == 100)
+                    {
+                        mDiff[i, j] = 0;
+                    }
+                    if (mBigGrid[i, j] == 140)
+                    {
+                        mDiff[i, j] = 1;
+                    }
+                    if (mBigGrid[i, j] == 180)
+                    {
+                        mDiff[i, j] = 2;
+                    }
+                }
+            }
+
             
             // Save map
             
@@ -359,24 +382,11 @@ namespace DiffCreate
             Dictionary<int, int> VegeDensity = BuildDictionary();
 
             // Recode map and create task difficulty map
-            mDiff = new RtwMatrix(nrows, ncols);
             for (int i = 0; i < nrows; i++)
             {
                 for (int j = 0; j < ncols; j++)
                 {
                     mBigGrid[i, j] = VegeDensity[Convert.ToInt16(mBigGrid[i, j])];
-                    if (mBigGrid[i, j] == 100)
-                    {
-                        mDiff[i, j] = 0;
-                    }
-                    if (mBigGrid[i, j] == 140)
-                    {
-                        mDiff[i, j] = 1;
-                    }
-                    if (mBigGrid[i, j] == 180)
-                    {
-                        mDiff[i, j] = 2;
-                    }
                 }
             }
         }
