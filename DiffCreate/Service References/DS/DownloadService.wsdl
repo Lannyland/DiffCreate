@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns0="http://edc/usgs/gov/xsd" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:axis2="http://edc/usgs/gov/" xmlns:ns1="http://org.apache.axis2/xsd" targetNamespace="http://edc/usgs/gov/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:documentation />
+  <wsdl:types>
+    <xs:schema xmlns:ns="http://edc/usgs/gov/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://edc/usgs/gov/xsd">
+      <xs:element name="getData">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="downloadID" nillable="true" type="xs:string" />
+            <xs:element name="DB" nillable="true" type="xs:string" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="getDataResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="return" nillable="true" type="xs:string" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="getDownloadStatus">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="downloadID" nillable="true" type="xs:string" />
+            <xs:element name="DB" nillable="true" type="xs:string" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="getDownloadStatusResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="return" nillable="true" type="xs:string" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="initiateDownload">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="siz" nillable="true" type="xs:string" />
+            <xs:element name="key" nillable="true" type="xs:string" />
+            <xs:element name="ras" nillable="true" type="xs:string" />
+            <xs:element name="pfm" nillable="true" type="xs:string" />
+            <xs:element name="imsurl" nillable="true" type="xs:string" />
+            <xs:element name="ms" nillable="true" type="xs:string" />
+            <xs:element name="att" nillable="true" type="xs:string" />
+            <xs:element name="lay" nillable="true" type="xs:string" />
+            <xs:element name="fid" nillable="true" type="xs:string" />
+            <xs:element name="dlpre" nillable="true" type="xs:string" />
+            <xs:element name="lft" nillable="true" type="xs:string" />
+            <xs:element name="rgt" nillable="true" type="xs:string" />
+            <xs:element name="top" nillable="true" type="xs:string" />
+            <xs:element name="bot" nillable="true" type="xs:string" />
+            <xs:element name="wmd" nillable="true" type="xs:string" />
+            <xs:element name="mur" nillable="true" type="xs:string" />
+            <xs:element name="mcd" nillable="true" type="xs:string" />
+            <xs:element name="mdf" nillable="true" type="xs:string" />
+            <xs:element name="arc" nillable="true" type="xs:string" />
+            <xs:element name="sde" nillable="true" type="xs:string" />
+            <xs:element name="msd" nillable="true" type="xs:string" />
+            <xs:element name="zun" nillable="true" type="xs:string" />
+            <xs:element name="prj" nillable="true" type="xs:string" />
+            <xs:element name="rsp" nillable="true" type="xs:string" />
+            <xs:element name="bnd" nillable="true" type="xs:string" />
+            <xs:element name="bndnm" nillable="true" type="xs:string" />
+            <xs:element name="csx" nillable="true" type="xs:string" />
+            <xs:element name="csy" nillable="true" type="xs:string" />
+            <xs:element name="ics" nillable="true" type="xs:string" />
+            <xs:element name="PL" nillable="true" type="xs:string" />
+            <xs:element name="MSU" nillable="true" type="xs:string" />
+            <xs:element name="MSS" nillable="true" type="xs:string" />
+            <xs:element name="MSL" nillable="true" type="xs:string" />
+            <xs:element name="MSEA" nillable="true" type="xs:string" />
+            <xs:element name="DLS" nillable="true" type="xs:string" />
+            <xs:element name="FID" nillable="true" type="xs:string" />
+            <xs:element name="ARC" nillable="true" type="xs:string" />
+            <xs:element name="DLA" nillable="true" type="xs:string" />
+            <xs:element name="EIDL" nillable="true" type="xs:string" />
+            <xs:element name="DB" nillable="true" type="xs:string" />
+            <xs:element name="ORIG" nillable="true" type="xs:string" />
+            <xs:element name="bulkID" nillable="true" type="xs:string" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="initiateDownloadResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="return" nillable="true" type="xs:string" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="setDownloadComplete">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="downloadID" nillable="true" type="xs:string" />
+            <xs:element name="DB" nillable="true" type="xs:string" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="setDownloadCompleteResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="return" nillable="true" type="xs:string" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="getDataRequest">
+    <wsdl:part name="parameters" element="ns0:getData" />
+  </wsdl:message>
+  <wsdl:message name="getDataResponse">
+    <wsdl:part name="parameters" element="ns0:getDataResponse" />
+  </wsdl:message>
+  <wsdl:message name="getDownloadStatusRequest">
+    <wsdl:part name="parameters" element="ns0:getDownloadStatus" />
+  </wsdl:message>
+  <wsdl:message name="getDownloadStatusResponse">
+    <wsdl:part name="parameters" element="ns0:getDownloadStatusResponse" />
+  </wsdl:message>
+  <wsdl:message name="setDownloadCompleteRequest">
+    <wsdl:part name="parameters" element="ns0:setDownloadComplete" />
+  </wsdl:message>
+  <wsdl:message name="setDownloadCompleteResponse">
+    <wsdl:part name="parameters" element="ns0:setDownloadCompleteResponse" />
+  </wsdl:message>
+  <wsdl:message name="initiateDownloadRequest">
+    <wsdl:part name="parameters" element="ns0:initiateDownload" />
+  </wsdl:message>
+  <wsdl:message name="initiateDownloadResponse">
+    <wsdl:part name="parameters" element="ns0:initiateDownloadResponse" />
+  </wsdl:message>
+  <wsdl:portType name="DownloadServicePortType">
+    <wsdl:operation name="getData">
+      <wsdl:input wsaw:Action="urn:getData" message="axis2:getDataRequest" />
+      <wsdl:output wsaw:Action="urn:getDataResponse" message="axis2:getDataResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="getDownloadStatus">
+      <wsdl:input wsaw:Action="urn:getDownloadStatus" message="axis2:getDownloadStatusRequest" />
+      <wsdl:output wsaw:Action="urn:getDownloadStatusResponse" message="axis2:getDownloadStatusResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="setDownloadComplete">
+      <wsdl:input wsaw:Action="urn:setDownloadComplete" message="axis2:setDownloadCompleteRequest" />
+      <wsdl:output wsaw:Action="urn:setDownloadCompleteResponse" message="axis2:setDownloadCompleteResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="initiateDownload">
+      <wsdl:input wsaw:Action="urn:initiateDownload" message="axis2:initiateDownloadRequest" />
+      <wsdl:output wsaw:Action="urn:initiateDownloadResponse" message="axis2:initiateDownloadResponse" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="DownloadServiceSOAP11Binding" type="axis2:DownloadServicePortType">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="getData">
+      <soap:operation soapAction="urn:getData" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getDownloadStatus">
+      <soap:operation soapAction="urn:getDownloadStatus" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="setDownloadComplete">
+      <soap:operation soapAction="urn:setDownloadComplete" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="initiateDownload">
+      <soap:operation soapAction="urn:initiateDownload" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="DownloadServiceHttpBinding" type="axis2:DownloadServicePortType">
+    <http:binding verb="POST" />
+    <wsdl:operation name="getData">
+      <http:operation location="DownloadService/getData" />
+      <wsdl:input>
+        <mime:content part="getData" type="text/xml" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content part="getData" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getDownloadStatus">
+      <http:operation location="DownloadService/getDownloadStatus" />
+      <wsdl:input>
+        <mime:content part="getDownloadStatus" type="text/xml" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content part="getDownloadStatus" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="setDownloadComplete">
+      <http:operation location="DownloadService/setDownloadComplete" />
+      <wsdl:input>
+        <mime:content part="setDownloadComplete" type="text/xml" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content part="setDownloadComplete" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="initiateDownload">
+      <http:operation location="DownloadService/initiateDownload" />
+      <wsdl:input>
+        <mime:content part="initiateDownload" type="text/xml" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content part="initiateDownload" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="DownloadService">
+    <wsdl:port name="DownloadServiceSOAP11port_http" binding="axis2:DownloadServiceSOAP11Binding">
+      <soap:address location="http://localhost:8080/axis2/services/DownloadService" />
+    </wsdl:port>
+    <wsdl:port name="DownloadServiceHttpport" binding="axis2:DownloadServiceHttpBinding">
+      <http:address location="http://localhost:8080/axis2/services/DownloadService" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

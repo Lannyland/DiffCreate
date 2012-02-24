@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:intf="http://edc.usgs.gov" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:impl="http://edc.usgs.gov" targetNamespace="http://edc.usgs.gov" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://edc.usgs.gov">
+      <xsd:element name="processAOI">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="requestInfoXml" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="processAOIResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="processAOIReturn" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="processAOI2">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="requestInfoXml" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="processAOI2Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="processAOI2Return" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="getTiledDataDirectURLs">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="requestInfoXml" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="getTiledDataDirectURLsResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="getTiledDataDirectURLsReturn" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="getTiledDataDirectURLs2">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="requestInfoXml" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="getTiledDataDirectURLs2Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="getTiledDataDirectURLs2Return" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="validateChunks">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="requestInfoXml" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="validateChunksResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="validateChunksReturn" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="processAOIResponse">
+    <wsdl:part name="parameters" element="impl:processAOIResponse" />
+  </wsdl:message>
+  <wsdl:message name="processAOI2Response">
+    <wsdl:part name="parameters" element="impl:processAOI2Response" />
+  </wsdl:message>
+  <wsdl:message name="getTiledDataDirectURLsResponse">
+    <wsdl:part name="parameters" element="impl:getTiledDataDirectURLsResponse" />
+  </wsdl:message>
+  <wsdl:message name="getTiledDataDirectURLs2Response">
+    <wsdl:part name="parameters" element="impl:getTiledDataDirectURLs2Response" />
+  </wsdl:message>
+  <wsdl:message name="validateChunksResponse">
+    <wsdl:part name="parameters" element="impl:validateChunksResponse" />
+  </wsdl:message>
+  <wsdl:message name="validateChunksRequest">
+    <wsdl:part name="parameters" element="impl:validateChunks" />
+  </wsdl:message>
+  <wsdl:message name="getTiledDataDirectURLsRequest">
+    <wsdl:part name="parameters" element="impl:getTiledDataDirectURLs" />
+  </wsdl:message>
+  <wsdl:message name="getTiledDataDirectURLs2Request">
+    <wsdl:part name="parameters" element="impl:getTiledDataDirectURLs2" />
+  </wsdl:message>
+  <wsdl:message name="processAOI2Request">
+    <wsdl:part name="parameters" element="impl:processAOI2" />
+  </wsdl:message>
+  <wsdl:message name="processAOIRequest">
+    <wsdl:part name="parameters" element="impl:processAOI" />
+  </wsdl:message>
+  <wsdl:portType name="RequestValidationService">
+    <wsdl:operation name="processAOI">
+      <wsdl:input name="processAOIRequest" message="impl:processAOIRequest" />
+      <wsdl:output name="processAOIResponse" message="impl:processAOIResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="processAOI2">
+      <wsdl:input name="processAOI2Request" message="impl:processAOI2Request" />
+      <wsdl:output name="processAOI2Response" message="impl:processAOI2Response" />
+    </wsdl:operation>
+    <wsdl:operation name="getTiledDataDirectURLs">
+      <wsdl:input name="getTiledDataDirectURLsRequest" message="impl:getTiledDataDirectURLsRequest" />
+      <wsdl:output name="getTiledDataDirectURLsResponse" message="impl:getTiledDataDirectURLsResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="getTiledDataDirectURLs2">
+      <wsdl:input name="getTiledDataDirectURLs2Request" message="impl:getTiledDataDirectURLs2Request" />
+      <wsdl:output name="getTiledDataDirectURLs2Response" message="impl:getTiledDataDirectURLs2Response" />
+    </wsdl:operation>
+    <wsdl:operation name="validateChunks">
+      <wsdl:input name="validateChunksRequest" message="impl:validateChunksRequest" />
+      <wsdl:output name="validateChunksResponse" message="impl:validateChunksResponse" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="RequestValidationServiceSoapBinding" type="impl:RequestValidationService">
+    <wsdlsoap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="processAOI">
+      <wsdlsoap:operation soapAction="" />
+      <wsdl:input name="processAOIRequest">
+        <wsdlsoap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="processAOIResponse">
+        <wsdlsoap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="processAOI2">
+      <wsdlsoap:operation soapAction="" />
+      <wsdl:input name="processAOI2Request">
+        <wsdlsoap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="processAOI2Response">
+        <wsdlsoap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getTiledDataDirectURLs">
+      <wsdlsoap:operation soapAction="" />
+      <wsdl:input name="getTiledDataDirectURLsRequest">
+        <wsdlsoap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="getTiledDataDirectURLsResponse">
+        <wsdlsoap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getTiledDataDirectURLs2">
+      <wsdlsoap:operation soapAction="" />
+      <wsdl:input name="getTiledDataDirectURLs2Request">
+        <wsdlsoap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="getTiledDataDirectURLs2Response">
+        <wsdlsoap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="validateChunks">
+      <wsdlsoap:operation soapAction="" />
+      <wsdl:input name="validateChunksRequest">
+        <wsdlsoap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="validateChunksResponse">
+        <wsdlsoap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="RequestValidationServiceService">
+    <wsdl:port name="RequestValidationService" binding="impl:RequestValidationServiceSoapBinding">
+      <wsdlsoap:address location="http://igskmncnwb010a.cr.usgs.gov/requestValidationService/services/RequestValidationService" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
