@@ -20,6 +20,11 @@ namespace DiffCreate
     {
         bool blnDebug = false;
         bool blnService = true;
+        int ncols = 0;
+        int nrows = 0;
+        RtwMatrix mBigGrid;
+        RtwMatrix mSmallGrid;
+        RtwMatrix mDiff;
 
         public Form1()
         {
@@ -61,6 +66,7 @@ namespace DiffCreate
 
         private void GetMap(string strLayerID, string strMap)
         {
+            /*
             // Call Validation Service to get DOWNLOAD_URL
             string strDownloadURL = GetDownloadURL(strLayerID);
             if (!blnService)
@@ -80,62 +86,24 @@ namespace DiffCreate
 
             // Extract map (Using library DotNetZip with Microsoft Public License http://dotnetzip.codeplex.com/)
             ExtractMap(strMap);
-                
+            */    
             // Load GridFloat
 
-            // Find header file
-            string[] MapFolders = Directory.GetDirectories("Maps\\" + strMap);
-            // Since there is only one folder
-            string[] HeaderFiles = Directory.GetFiles(MapFolders[0], "*.hdr");
-            string HeaderFile = HeaderFiles[0];
+            // Read in map from binary GridFloat
+            ReadInMap(strMap);
 
-            // Identify col and row count in .hdr file
-            int ncols = 0;
-            int nrows = 0;
-            try
-            {
-                // Create an instance of StreamReader to read from a file.
-                // The using statement also closes the StreamReader.
-                using (StreamReader sr = new StreamReader(HeaderFile))
-                {
-                    string sLine;
-                    // First line is ncols
-                    sLine = sr.ReadLine();
-                    string[] stuff = sLine.Split(' ');
-                    ncols = Convert.ToInt16(stuff[stuff.Length-1]);
-                    // Second line is nrows
-                    sLine = sr.ReadLine();
-                    stuff = sLine.Split(' ');
-                    nrows = Convert.ToInt16(stuff[stuff.Length - 1]);
-                }
-            }
-            catch (Exception e)
-            {
-                // Let the user know what went wrong.
-                Console.WriteLine("The file could not be read:");
-                Console.WriteLine(e.Message);
-            }
-            Log("ncols = " + ncols + ", nrows = " + nrows);
-
-            // Read in float grid
-            string[] FloatFiles = Directory.GetFiles(MapFolders[0], "*.flt");
-            string FloatFile = HeaderFiles[0];
-            using (BinaryReader reader = new BinaryReader(File.Open(FloatFile, FileMode.Open)))
-            {
-                // read 4 bytes
-                byte[] floatBytes = reader.ReadBytes(4);
-                // swap the bytes
-                floatBytes.Reverse();   
-                // get the float from the byte array
-                foreach (byte b in floatBytes)
-                {
-                    float value = BitConverter.ToSingle(floatBytes, 0);
-                }
-            }
             // Recode map
-            // Use Dictionary
+            if (strMap == "Landcover")
+            {
+                RecodeMap();
+            }
 
+            // Resize map
+
+            
             // Save map
+            
+            
             // Load map and display
         }
 
@@ -213,7 +181,7 @@ namespace DiffCreate
         private string GetDownloadID(string strDownloadURL)
         {
             string strDownloadID = WebGetCall(strDownloadURL);
-            Log("DOWNLOAD_ID = " + strDownloadURL);
+            Log("DOWNLOAD_ID = " + strDownloadID);
             return strDownloadID;
         }
 
@@ -334,6 +302,116 @@ namespace DiffCreate
                 }
             }
         }
+
+        private void ReadInMap(string strMap)
+        {
+            // Find header file
+            string[] MapFolders = Directory.GetDirectories("Maps\\" + strMap);
+            // Since there is only one folder
+            string[] HeaderFiles = Directory.GetFiles(MapFolders[0], "*.hdr");
+            string HeaderFile = HeaderFiles[0];
+
+            // Identify col and row count in .hdr file
+            try
+            {
+                // Create an instance of StreamReader to read from a file.
+                // The using statement also closes the StreamReader.
+                using (StreamReader sr = new StreamReader(HeaderFile))
+                {
+                    string sLine;
+                    // First line is ncols
+                    sLine = sr.ReadLine();
+                    string[] stuff = sLine.Split(' ');
+                    ncols = Convert.ToInt16(stuff[stuff.Length - 1]);
+                    // Second line is nrows
+                    sLine = sr.ReadLine();
+                    stuff = sLine.Split(' ');
+                    nrows = Convert.ToInt16(stuff[stuff.Length - 1]);
+                }
+            }
+            catch (Exception e)
+            {
+                // Let the user know what went wrong.
+                Console.WriteLine("The file could not be read:");
+                Console.WriteLine(e.Message);
+            }
+            Log("ncols = " + ncols + ", nrows = " + nrows);
+
+            // Read in float grid
+            mBigGrid = new RtwMatrix(nrows, ncols);
+            string[] FloatFiles = Directory.GetFiles(MapFolders[0], "*.flt");
+            string FloatFile = FloatFiles[0];
+            using (BinaryReader reader = new BinaryReader(File.Open(FloatFile, FileMode.Open)))
+            {
+                for (int i = 0; i < nrows; i++)
+                {
+                    for (int j = 0; j < ncols; j++)
+                    {
+                        float value = reader.ReadSingle();
+                        mBigGrid[i, j] = value;
+                    }
+                }
+            }
+        }
+
+        private void RecodeMap()
+        {
+            Dictionary<int, int> VegeDensity = BuildDictionary();
+
+            // Recode map and create task difficulty map
+            mDiff = new RtwMatrix(nrows, ncols);
+            for (int i = 0; i < nrows; i++)
+            {
+                for (int j = 0; j < ncols; j++)
+                {
+                    mBigGrid[i, j] = VegeDensity[Convert.ToInt16(mBigGrid[i, j])];
+                    if (mBigGrid[i, j] == 100)
+                    {
+                        mDiff[i, j] = 0;
+                    }
+                    if (mBigGrid[i, j] == 140)
+                    {
+                        mDiff[i, j] = 1;
+                    }
+                    if (mBigGrid[i, j] == 180)
+                    {
+                        mDiff[i, j] = 2;
+                    }
+                }
+            }
+        }
+
+        private Dictionary<int, int> BuildDictionary()
+        {
+            Dictionary<int, int> VegeDensity = new Dictionary<int, int>();
+            // Sparse
+            VegeDensity.Add(11, 100);      // Open water: sparse
+            VegeDensity.Add(12, 100);      // Perennial Ice/Snow: sparse
+            VegeDensity.Add(21, 100);      // Developed, Open Space: sparse
+            VegeDensity.Add(22, 100);      // Developed, Low Intensity: sparse
+            VegeDensity.Add(23, 100);      // Developed, Medium Intensity: sparse
+            VegeDensity.Add(24, 100);      // Developed, High Intensity: sparse
+            VegeDensity.Add(31, 100);      // Barren Land (Rock/Sand/Clay): sparse
+            VegeDensity.Add(71, 100);      // Grassland/Herbaceous: sparse
+            VegeDensity.Add(72, 100);      // Sedge/Herbaceous: sparse
+            VegeDensity.Add(73, 100);      // Lichens: sparse
+            VegeDensity.Add(74, 100);      // Moss: sparse
+            VegeDensity.Add(81, 100);      // Pasture/Hay: sparse
+            VegeDensity.Add(82, 100);      // Cultivated Crops: sparse
+            VegeDensity.Add(95, 100);      // Emergent Herbaceous Wetlands: sparse
+            VegeDensity.Add(-9999, 100);   // Data not available: sparse
+            // Medium
+            VegeDensity.Add(51, 140);      // Dwarf Scrub: medium
+            VegeDensity.Add(52, 140);      // Shrub/Scrub: medium
+            // Dense
+            VegeDensity.Add(41, 180);      // Deciduous Forest: dense
+            VegeDensity.Add(42, 180);      // Evergreen Forest: dense
+            VegeDensity.Add(43, 180);      // Mixed Forest: dense
+            VegeDensity.Add(90, 180);      // Woody Wetlands: dense
+
+            return VegeDensity;
+        }
+
 
 
 
