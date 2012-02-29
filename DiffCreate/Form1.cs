@@ -25,6 +25,7 @@ namespace DiffCreate
         RtwMatrix mBigGrid;
         RtwMatrix mSmallGrid;
         RtwMatrix mDiff;
+        float maxElevation = 0;
         const double d2r = 0.0174532925199433;  // PI / 180
 
         public Form1()
@@ -110,8 +111,11 @@ namespace DiffCreate
                 CreateDiffMap();
 
                 // Save map
-                SaveDiffMap();
+                SaveMap("DiffMap", mDiff);
             }
+
+            // Save resized map
+            SaveMap(strMap, mSmallGrid);
         }
 
         private string GetDownloadURL(string strLayerID)
@@ -436,6 +440,13 @@ namespace DiffCreate
             Log("Resizing map to 24mx24m grid......");
             // Convert matrix to big image
             Bitmap CurBMP = new Bitmap(mBigGrid.Columns, mBigGrid.Rows);
+            if (strMap != "Landcover")
+            {
+                // Scale matrix values before creating image 
+                float[] MinMax = mBigGrid.MinMaxValue();
+                maxElevation = MinMax[1];
+                ImgLib.ScaleImageValues(ref mBigGrid);
+            }
             ImgLib.MatrixToImage(ref mBigGrid, ref CurBMP);
             // Compute the size of smaller image
             int newWidth = Convert.ToInt16(Math.Round(Haversine_km(
@@ -461,6 +472,10 @@ namespace DiffCreate
             g.DrawImage(CurBMP, 0, 0, newWidth, newHeight);
             g.Dispose();
             mSmallGrid = ImgLib.ImageToMatrix(ref NewBMP);
+            if (strMap != "Landcover")
+            {
+                ImgLib.ScaleBack(ref mSmallGrid, maxElevation);
+            }
             LogLine("Done!");
         }
 
@@ -500,26 +515,37 @@ namespace DiffCreate
             LogLine("Done!");
         }
 
-        private void SaveDiffMap()
+        private void SaveMap(string mapName, RtwMatrix mMap)
         {
-            string TargetDirectory = "Maps\\DiffMaps";
-            string TargetFile = Path.GetDirectoryName(Application.ExecutablePath) + "\\" + TargetDirectory + "\\DiffMap.csv";
-            Log("Saving task difficulty map to " + TargetFile + "......");
-            // Delete folder if it already exists
-            if (Directory.Exists(TargetDirectory))
+            string TargetDirectory = "Maps\\" + mapName;
+            string TargetFile = Path.GetDirectoryName(Application.ExecutablePath) + "\\" + TargetDirectory + "\\" + mapName + ".csv";
+            Log("Saving " + mapName + " to " + TargetFile + "......");
+            // Create folder if it doesn't exist
+            if (!Directory.Exists(TargetDirectory))
             {
-                Directory.Delete(TargetDirectory, true);
+                Directory.CreateDirectory(TargetDirectory);
             }
-            Directory.CreateDirectory(TargetDirectory);
+            // Delete file if it already exists
+            if (File.Exists(TargetFile))
+            {
+                File.Delete(TargetFile);
+            }
 
             using (System.IO.StreamWriter file = new System.IO.StreamWriter(TargetFile))
             {
-                for (int i = 0; i < mDiff.Rows; i++)
+                for (int i = 0; i < mMap.Rows; i++)
                 {
                     string strLine = "";
-                    for (int j = 0; j < mDiff.Columns; j++)
+                    for (int j = 0; j < mMap.Columns; j++)
                     {
-                        strLine += Convert.ToInt16(mDiff[i, j]) + ",";
+                        if (mapName == "Landcover")
+                        {
+                            strLine += Convert.ToInt16(mMap[i, j]) + ",";
+                        }
+                        else
+                        {
+                            strLine += mMap[i, j] + ",";
+                        }
                     }
                     strLine = strLine.Substring(0, strLine.Length - 1);
                     file.WriteLine(strLine);

@@ -150,26 +150,26 @@ namespace IPPA
         {
             float[] MinMax = imgin.MinMaxValue();
             float max = MinMax[1];
-            if (max != 0)
+            for (int y = 0; y < imgin.Rows; y++)
             {
-                for (int y = 0; y < imgin.Rows; y++)
+                for (int x = 0; x < imgin.Columns; x++)
                 {
-                    for (int x = 0; x < imgin.Columns; x++)
-                    {
-                        imgin[y, x] = imgin[y, x] / max * 255;
-                    }
-                }
-            }
-            else
-            {
-                for (int y = 0; y < imgin.Rows; y++)
-                {
-                    for (int x = 0; x < imgin.Columns; x++)
-                    {
-                        imgin[y, x] = imgin[y, x] / max * 255;
-                    }
+                    imgin[y, x] = imgin[y, x] / max * 255;
                 }
             }
         }
+
+        // Scale matrix back
+        public static void ScaleBack(ref RtwMatrix matrixOut, float max)
+        {
+            for (int y = 0; y < matrixOut.Rows; y++)
+            {
+                for (int x = 0; x < matrixOut.Columns; x++)
+                {
+                    matrixOut[y, x] = matrixOut[y, x] / 255 * max;
+                }
+            }
+        }
+
     }
 }
