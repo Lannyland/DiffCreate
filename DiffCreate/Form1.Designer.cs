@@ -133,6 +133,7 @@
             this.chkDebug.TabIndex = 12;
             this.chkDebug.Text = "Debug Print";
             this.chkDebug.UseVisualStyleBackColor = true;
+            this.chkDebug.CheckedChanged += new System.EventHandler(this.chkDebug_CheckedChanged);
             // 
             // btnGetElevation
             // 

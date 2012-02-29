@@ -25,6 +25,7 @@ namespace DiffCreate
         RtwMatrix mBigGrid;
         RtwMatrix mSmallGrid;
         RtwMatrix mDiff;
+        const double d2r = 0.0174532925199433;  // PI / 180
 
         public Form1()
         {
@@ -43,6 +44,11 @@ namespace DiffCreate
             //txtLeft.Text = "-96.715";
             //txtRight.Text = "-96.689";
 
+            blnDebug = chkDebug.Checked;
+        }
+
+        private void chkDebug_CheckedChanged(object sender, EventArgs e)
+        {
             blnDebug = chkDebug.Checked;
         }
 
@@ -66,7 +72,6 @@ namespace DiffCreate
 
         private void GetMap(string strLayerID, string strMap)
         {
-            /*
             // Call Validation Service to get DOWNLOAD_URL
             string strDownloadURL = GetDownloadURL(strLayerID);
             if (!blnService)
@@ -86,8 +91,6 @@ namespace DiffCreate
 
             // Extract map (Using library DotNetZip with Microsoft Public License http://dotnetzip.codeplex.com/)
             ExtractMap(strMap);
-            */    
-            // Load GridFloat
 
             // Read in map from binary GridFloat
             ReadInMap(strMap);
@@ -99,45 +102,27 @@ namespace DiffCreate
             }
 
             // Resize map
+            ResizeMap(strMap);
 
-
-
-
-            mDiff = new RtwMatrix(nrows, ncols);
-            for (int i = 0; i < nrows; i++)
+            if (strMap == "Landcover")
             {
-                for (int j = 0; j < ncols; j++)
-                {
-                    if (mBigGrid[i, j] == 100)
-                    {
-                        mDiff[i, j] = 0;
-                    }
-                    if (mBigGrid[i, j] == 140)
-                    {
-                        mDiff[i, j] = 1;
-                    }
-                    if (mBigGrid[i, j] == 180)
-                    {
-                        mDiff[i, j] = 2;
-                    }
-                }
-            }
+                // Create task difficulty map
+                CreateDiffMap();
 
-            
-            // Save map
-            
-            
-            // Load map and display
+                // Save map
+                SaveDiffMap();
+            }
         }
 
         private string GetDownloadURL(string strLayerID)
         {
             // Connect to Request Validation Web Services
-            Log("Connect to Request ValidationConstraints Service...");
+            Log("Connect to Request ValidationConstraints Service......");
             RVS.RequestValidationServiceClient myRVS = new RVS.RequestValidationServiceClient();
+            LogLine("Done!");
 
             // Build XML
-            Log("Building input XML request string...");
+            Log("Building input XML request string......");
             string xmlRequestString = "<REQUEST_SERVICE_INPUT>" +
                                 "<AOI_GEOMETRY>" +
                                 "<EXTENT>" +
@@ -158,23 +143,26 @@ namespace DiffCreate
                                 "</REQUEST_SERVICE_INPUT>";
             if (blnDebug)
             {
-                Log("Displaying input XML request String:");
-                Log(xmlRequestString);
-                Log("");
+                LogLine("");
+                LogLine("Displaying input XML request String:");
+                LogLine(xmlRequestString);
             }
+            LogLine("Done!");
 
             // Send Request
             string strMyResponse = "";
             try
             {
-                Log("Sending SOAP request...");
+                Log("Sending SOAP request......");
                 System.Net.ServicePointManager.Expect100Continue = false;
                 strMyResponse = myRVS.processAOI2(xmlRequestString);
                 if (blnDebug)
                 {
-                    Log("SOAP Response:");
-                    Log(strMyResponse);
+                    LogLine("");
+                    LogLine("SOAP Response:");
+                    LogLine(strMyResponse);
                 }
+                LogLine("Done!");
             }
             catch (Exception ex)
             {
@@ -183,12 +171,14 @@ namespace DiffCreate
                     Log("Error calling Validation Service: " + ex.ToString());
                 }
                 //TODO If 503 busy then repeat.
-                Log("The service is temporarily unavailable. Please try again later!");
+                LogLine("");
+                LogLine("The service is temporarily unavailable. Please try again later!");
                 blnService = false;
                 return "";
             }
 
             // Parse response
+            Log("Parsing response......");
             strMyResponse = strMyResponse.Replace("&", "@");
             string strDownloadURL = "";
             using (XmlReader reader = XmlReader.Create(new StringReader(strMyResponse)))
@@ -196,15 +186,25 @@ namespace DiffCreate
                 reader.ReadToFollowing("DOWNLOAD_URL");
                 strDownloadURL = reader.ReadElementContentAsString();
                 strDownloadURL = strDownloadURL.Replace("@", "&");
-                Log("DOWNLOAD_URL = " + strDownloadURL);
+                if(blnDebug)
+                {
+                    LogLine("");
+                    LogLine("DOWNLOAD_URL = " + strDownloadURL);
+                }
             }
+            LogLine("Done!");
             return strDownloadURL;
         }
 
         private string GetDownloadID(string strDownloadURL)
         {
+            Log("Getting Download ID......");
             string strDownloadID = WebGetCall(strDownloadURL);
-            Log("DOWNLOAD_ID = " + strDownloadID);
+            LogLine("Done!");
+            if(blnDebug)
+            {
+            LogLine("DOWNLOAD_ID = " + strDownloadID);
+            }
             return strDownloadID;
         }
 
@@ -217,7 +217,6 @@ namespace DiffCreate
             string xmlResponse = "";
             try
             {
-
                 objStream = wrGETURL.GetResponse().GetResponseStream();
                 StreamReader objReader = new StreamReader(objStream);
                 string sLine = "";
@@ -232,13 +231,12 @@ namespace DiffCreate
                 if (blnDebug)
                 {
                     Log("xmlResponse = ");
-                    Log(xmlResponse);
-                    Log("");
+                    LogLine(xmlResponse);
                 }
             }
             catch (Exception ex)
             {
-                Log("Error opening download page: " + ex.ToString());
+                LogLine("Error opening download page: " + ex.ToString());
             }
             //TODO Deal with time out no response.
 
@@ -261,14 +259,15 @@ namespace DiffCreate
             string strStatus = "";
             int timeout = 120;       // time out set at 120 seconds
             int timelapsed = 0;
+            LogLine("");
             while (timelapsed < timeout || intStatusCode == 1)
             {
                 strStatus = WebGetCall("http://extract.cr.usgs.gov/axis2/services/DownloadService/getDownloadStatus?downloadID=" + strDownloadID);
-                Log(strStatus);
+                LogLine(strStatus);
                 if (strStatus.Substring(0,3) == "400")
                 {
                     intStatusCode = 1;
-                    Log("Data prep time " + timelapsed + " seconds.");
+                    LogLine("Data prep time " + timelapsed + " seconds.");
                     break;
                 }
                 else if (strStatus == "error")
@@ -284,6 +283,7 @@ namespace DiffCreate
 
         private void DownloadMap(string strMap, string strDownloadID)
         {
+            Log("Downloading map......");
             // Download map
             if (!Directory.Exists("Maps"))
             {
@@ -298,18 +298,18 @@ namespace DiffCreate
             strStatus = WebGetCall("http://extract.cr.usgs.gov/axis2/services/DownloadService/setDownloadComplete?downloadID=" + strDownloadID);
             if (strStatus.Substring(0, 12) == "Successfully")
             {
-                Log("Download completed successfully!");
+                LogLine("Done");
             }
             else
             {
                 Log("Something went wrong:");
-                Log(strStatus);
+                LogLine(strStatus);
             }
         }
 
         private void ExtractMap(string strMap)
         {
-            Log("Extracting downloaded zip file...");
+            Log("Extracting downloaded zip file......");
             string ExistingZipFile = "Maps\\" + strMap + ".zip";
             string TargetDirectory = "Maps\\" + strMap;
             // Delete folder if it already exists
@@ -324,10 +324,12 @@ namespace DiffCreate
                     e.Extract(TargetDirectory);  // overwrite == true
                 }
             }
+            LogLine("Done!");
         }
 
         private void ReadInMap(string strMap)
         {
+            Log("Reading extracted map......");
             // Find header file
             string[] MapFolders = Directory.GetDirectories("Maps\\" + strMap);
             // Since there is only one folder
@@ -358,7 +360,11 @@ namespace DiffCreate
                 Console.WriteLine("The file could not be read:");
                 Console.WriteLine(e.Message);
             }
-            Log("ncols = " + ncols + ", nrows = " + nrows);
+            if(blnDebug)
+            {
+                LogLine("");
+                LogLine("ncols = " + ncols + ", nrows = " + nrows);
+            }
 
             // Read in float grid
             mBigGrid = new RtwMatrix(nrows, ncols);
@@ -375,10 +381,12 @@ namespace DiffCreate
                     }
                 }
             }
+            LogLine("Done!");
         }
 
         private void RecodeMap()
         {
+            Log("Recoding landcover map......");
             Dictionary<int, int> VegeDensity = BuildDictionary();
 
             // Recode map and create task difficulty map
@@ -389,6 +397,7 @@ namespace DiffCreate
                     mBigGrid[i, j] = VegeDensity[Convert.ToInt16(mBigGrid[i, j])];
                 }
             }
+            LogLine("Done!");
         }
 
         private Dictionary<int, int> BuildDictionary()
@@ -422,10 +431,109 @@ namespace DiffCreate
             return VegeDensity;
         }
 
+        private void ResizeMap(string strMap)
+        {
+            Log("Resizing map to 24mx24m grid......");
+            // Convert matrix to big image
+            Bitmap CurBMP = new Bitmap(mBigGrid.Columns, mBigGrid.Rows);
+            ImgLib.MatrixToImage(ref mBigGrid, ref CurBMP);
+            // Compute the size of smaller image
+            int newWidth = Convert.ToInt16(Math.Round(Haversine_km(
+                            Convert.ToDouble(txtTop.Text),
+                            Convert.ToDouble(txtLeft.Text),
+                            Convert.ToDouble(txtTop.Text),
+                            Convert.ToDouble(txtRight.Text)))*1000/24);
+            int newHeight = Convert.ToInt16(Math.Round(Haversine_km(
+                            Convert.ToDouble(txtTop.Text),
+                            Convert.ToDouble(txtLeft.Text),
+                            Convert.ToDouble(txtBottom.Text),
+                            Convert.ToDouble(txtLeft.Text)))*1000/24);
+            Bitmap NewBMP = new Bitmap(newWidth, newHeight);
+            Graphics g = Graphics.FromImage((Image)NewBMP);
+            if (strMap == "Landcover")
+            {
+                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+            }
+            else
+            {
+                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+            }
+            g.DrawImage(CurBMP, 0, 0, newWidth, newHeight);
+            g.Dispose();
+            mSmallGrid = ImgLib.ImageToMatrix(ref NewBMP);
+            LogLine("Done!");
+        }
 
+        private double Haversine_km(double lat1, double long1, double lat2, double long2)
+        {
+            double dlong = (long2 - long1) * d2r;
+            double dlat = (lat2 - lat1) * d2r;
+            double a = Math.Pow(Math.Sin(dlat / 2.0), 2) + Math.Cos(lat1 * d2r) * Math.Cos(lat2 * d2r) * Math.Pow(Math.Sin(dlong / 2.0), 2);
+            double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+            double d = 6367 * c;
 
+            return d;
+        }
+
+        private void CreateDiffMap()
+        {
+            Log("Creating task difficulty map......");
+            mDiff = new RtwMatrix(mSmallGrid.Rows, mSmallGrid.Columns);
+            for (int i = 0; i < mDiff.Rows; i++)
+            {
+                for (int j = 0; j < mDiff.Columns; j++)
+                {
+                    if (mSmallGrid[i, j] == 100)
+                    {
+                        mDiff[i, j] = 0;
+                    }
+                    if (mSmallGrid[i, j] == 140)
+                    {
+                        mDiff[i, j] = 1;
+                    }
+                    if (mSmallGrid[i, j] == 180)
+                    {
+                        mDiff[i, j] = 2;
+                    }
+                }
+            }
+            LogLine("Done!");
+        }
+
+        private void SaveDiffMap()
+        {
+            string TargetDirectory = "Maps\\DiffMaps";
+            string TargetFile = Path.GetDirectoryName(Application.ExecutablePath) + "\\" + TargetDirectory + "\\DiffMap.csv";
+            Log("Saving task difficulty map to " + TargetFile + "......");
+            // Delete folder if it already exists
+            if (Directory.Exists(TargetDirectory))
+            {
+                Directory.Delete(TargetDirectory, true);
+            }
+            Directory.CreateDirectory(TargetDirectory);
+
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(TargetFile))
+            {
+                for (int i = 0; i < mDiff.Rows; i++)
+                {
+                    string strLine = "";
+                    for (int j = 0; j < mDiff.Columns; j++)
+                    {
+                        strLine += Convert.ToInt16(mDiff[i, j]) + ",";
+                    }
+                    strLine = strLine.Substring(0, strLine.Length - 1);
+                    file.WriteLine(strLine);
+                }
+            }
+            LogLine("Done!");
+        }
 
         private void Log(string str)
+        {
+            rtxtLog.AppendText(str);
+        }
+
+        private void LogLine(string str)
         {
             rtxtLog.AppendText(str + "\n");
         }
